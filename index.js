@@ -9,8 +9,8 @@ const incompletedTodosCounterEl = document.querySelector('.incompletedTodosCount
 addTaskButtonEl.addEventListener('click', onButtonClick);
 
 let allTodosCounterValue = 0;
-let completedTodosCounterValue = 0;
 let incompletedTodosCounterValue = 0;
+let completedTodosCounterValue = 0;
 
 allTodosCounterEl.textContent = allTodosCounterValue;
 completedTodosCounterEl.textContent = completedTodosCounterValue;
@@ -20,31 +20,21 @@ function onButtonClick() {
     renderTodoItem();
     inputEl.value = "";
     allTodosCounterValue += 1; 
+    // doesn't count????
+    incompletedTodosCounterValue = allTodosCounterValue - completedTodosCounterValue;
+    console.log(incompletedTodosCounterValue)
     allTodosCounterEl.innerHTML = `${allTodosCounterValue}`
 }
 
 function renderTodoItem() {
-    const todoItemEl = document.createElement('li');
-    todoItemEl.classList.add('todoItem');
-
-    const todoItemTextEl = document.createElement('p');
-    todoItemTextEl.classList.add('todoItemText');
-    todoItemTextEl.textContent = inputEl.value;
-
-    const removeItemButtontEl = document.createElement('button');
-    removeItemButtontEl.classList.add('removeItemButton');
-    removeItemButtontEl.setAttribute('type', 'button');
-    removeItemButtontEl.textContent = 'remove';
-
-    const completeItemCheckBoxtEl = document.createElement('input');
-    completeItemCheckBoxtEl.classList.add('CompleteItemButton');
-    completeItemCheckBoxtEl.setAttribute('type', 'checkbox');
-    
-    todoItemEl.appendChild(completeItemCheckBoxtEl);
-    todoItemEl.appendChild(todoItemTextEl);
-    todoItemEl.appendChild(removeItemButtontEl);
-
-    todoListEl.prepend(todoItemEl);
-
+    todoListEl.insertAdjacentHTML('afterbegin', 
+        `<li class="todoItem">
+            <input class="CompleteItemButton" type="checkbox">
+            <p class="todoItemText">${inputEl.value}</p>
+            <button class="removeItemButton" type="button">Remove</button>
+        </li>`
+    )
     // localStorage.setItem('todos', JSON.stringify(todoItemEl));
 }
+
+
