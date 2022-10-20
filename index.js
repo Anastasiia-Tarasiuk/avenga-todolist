@@ -103,8 +103,8 @@ function itemActions(e) {
     }
     
     if (element.className === "completeItemButton") {
-        if (checkbox.getAttribute('checked') === null) {
-            setItemCompleted(item, checkbox);
+        if (checkbox.checked) {
+            setItemCompleted(item);
         } else {
             unsetItemCompleted(checkbox, itemDataIndex, todoCompletedItemArray);
         }
@@ -119,9 +119,8 @@ function removeItem(id, array) {
     updateTodoCounter();
 }
 
-function setItemCompleted(element, checkbox) {
+function setItemCompleted(element) {
 
-    checkbox.setAttribute('checked', '');
     const item = {
         "id": element.getAttribute('data-index'),
         "item": element.querySelector('.todoItemText').textContent,
@@ -135,7 +134,6 @@ function setItemCompleted(element, checkbox) {
 
 
 function unsetItemCompleted(checkbox, id, array) {
-
     checkbox.removeAttribute('checked');
     removeItem(id, array);
 }
@@ -155,4 +153,3 @@ function removeFormDom(id) {
     const element = document.querySelector(`[data-index="${id}"]`);
     element.remove();
 }
-

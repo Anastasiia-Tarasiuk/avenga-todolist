@@ -16,3 +16,7 @@ h1 {
 .counterItem:not(:last-child) {
     margin-right: 30px;
 }
+
+.completedTodoList {
+    margin-left: 100px;
+}
