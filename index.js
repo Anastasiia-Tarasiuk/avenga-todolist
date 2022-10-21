@@ -16,10 +16,33 @@ const todoItemTemplate = `
 <button class="removeItemButton" type="button" onclick="onRemoveBtnClick(this)">Remove</button>
 </li>`
 
-let todoItemArray = [];
-    
-completedTodosCounterEl.textContent = 0;
-incompletedTodosCounterEl.textContent = 0;
+let todoItemArray = JSON.parse(localStorage.getItem('todos')) || [];
+
+if (todoItemArray.length > 0) {
+
+    for (let i = 0; i < todoItemArray.length; i++) {
+        if (todoItemArray[i].isDone) {
+
+            renderTodoItem(todoItemArray[i].id, todoItemArray[i].item, completedTodoListEl);
+
+            const checkboxEl = completedTodoListEl.querySelector('.completeItemButton');
+            checkboxEl.setAttribute('checked', '');    
+        } else {
+
+            renderTodoItem(todoItemArray[i].id, todoItemArray[i].item, incompletedTodoListEl);
+        
+            const checkboxEl = incompletedTodoListEl.querySelector('.completeItemButton');
+            checkboxEl.removeAttribute('checked');
+        }
+
+    }
+    updateTodoCounter();
+}
+
+if (todoItemArray.length === 0) {
+    completedTodosCounterEl.textContent = 0;
+    incompletedTodosCounterEl.textContent = 0;
+}
     
 function onButtonClick() {
     const dataIndex = Math.random().toString(36).slice(-6);
@@ -44,6 +67,7 @@ function setArrayItem(value, dataIndex) {
         "isDone": false,
     }
     todoItemArray.push(item);
+    localStorage.setItem('todos', JSON.stringify(todoItemArray));
 }
 
 function updateTodoCounter() {
@@ -81,6 +105,8 @@ function changeCheckboxValue(index, element, dataDoneStatus) {
     })
 
     changeArrayItemStatus(index);
+    localStorage.clear();
+    localStorage.setItem('todos', JSON.stringify(todoItemArray));
     updateTodoCounter();
 }
 
@@ -95,7 +121,7 @@ function onRemoveBtnClick(e) {
             removeFormDom(itemDataIndex, document);
         }
     });
-    
+
     updateTodoCounter();
 }
 
@@ -103,6 +129,9 @@ function removeItem(id) {
     todoItemArray = todoItemArray.filter(item => {
         return item.id !== id;
     });
+
+    localStorage.clear();
+    localStorage.setItem('todos', JSON.stringify(todoItemArray));
 }
 
 function removeFormDom(id, element) {
@@ -117,3 +146,4 @@ function changeArrayItemStatus(index) {
         }
     })
 }
+
