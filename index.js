@@ -43,7 +43,6 @@ function setArrayItem(value, dataIndex) {
         "item": value,
         "isDone": false,
     }
-    
     todoItemArray.push(item);
 }
 
@@ -75,11 +74,13 @@ function onCheckBoxClick(e) {
 function changeCheckboxValue(index, element, dataDoneStatus) {
     [...element.querySelectorAll('.todoItem')].map(el => {
         // remove item from list if dataIndex of item is the same as choosen item has
-            if (el.getAttribute('data-index') === index) {
-                el.setAttribute('data-done-status', dataDoneStatus);
-                removeFormDom(index, element);
-            }
+        if (el.getAttribute('data-index') === index) {
+            el.setAttribute('data-done-status', dataDoneStatus);
+            removeFormDom(index, element);
+        }
     })
+
+    changeArrayItemStatus(index);
     updateTodoCounter();
 }
 
@@ -103,7 +104,6 @@ function removeItem(id) {
     todoItemArray = todoItemArray.filter(item => {
         return item.id !== id;
     });
-
 }
 
 function removeFormDom(id, element) {
@@ -111,3 +111,10 @@ function removeFormDom(id, element) {
     item.remove();
 }
 
+function changeArrayItemStatus(index) {
+    todoItemArray.map(el => {
+        if (el.id === index) {
+            el.isDone = !el.isDone;
+        }
+    })
+}
