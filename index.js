@@ -1,5 +1,6 @@
 const inputEl = document.querySelector('.input');
 const addTaskButtonEl = document.querySelector('.addTaskButton');
+
 const todoListEl = document.querySelector('.todoList');
 const completedTodoListEl = document.querySelector('.completedTodoList');
 const incompletedTodoListEl = document.querySelector('.incompletedTodoList');
@@ -19,6 +20,8 @@ const todoItemTemplate = `
 
 let todoItemArray = [];
 let todoCompletedItemArray = [];
+let todoIncompletedItemArray = [];
+
 
 let allTodosCounterValue = 0;
 let completedTodosCounterValue = 0;
@@ -26,8 +29,12 @@ let incompletedTodosCounterValue = 0;
 
 updateTodoCounter();
     
-const todoItemEls = document.querySelectorAll('.todoItem');
-todoListEl.addEventListener('click', itemActions);
+const todoItemEls = todoListEl.querySelectorAll('.todoItem');
+const completedTodoItemEls = completedTodoListEl.querySelectorAll('.todoItem');
+
+
+todoListEl.addEventListener('click', itemActions); 
+completedTodoListEl.addEventListener('click', itemActions);
     
 function onButtonClick() {
     createTodoItem();
@@ -90,32 +97,49 @@ function createTodoItem() {
 
 function itemActions(e) {
     const element = e.target;
+    console.log(element)
     const item = element.closest('li');
     const checkbox = element.closest('input');
-
-    console.log(item)
-    console.log(checkbox)
-
     const itemDataIndex = item.getAttribute('data-index');
-    
+
+    const currentListClassName = element.parentElement.parentElement.className;
+    let currentArray = null;
+    let elementToDoAction = null;
+
+    if (currentListClassName === 'todoList') {
+        currentArray = todoItemArray;
+        elementToDoAction = todoListEl;
+    }
+
+    if (currentListClassName === 'completedTodoList') {
+        currentArray = todoCompletedItemArray;
+        elementToDoAction = completedTodoListEl;
+    }
+
+    if (currentListClassName === 'incompletedTodoList') {
+        currentArray = todoIncompletedItemArray;
+        elementToDoAction = incompletedTodoListEl;
+    }
+        
     if (element.className === "removeItemButton") {
-        removeItem(itemDataIndex, todoItemArray);
+        removeItem(itemDataIndex, currentArray, elementToDoAction);
     }
     
     if (element.className === "completeItemButton") {
         if (checkbox.checked) {
             setItemCompleted(item);
         } else {
-            unsetItemCompleted(checkbox, itemDataIndex, todoCompletedItemArray);
+            unsetItemCompleted(checkbox, itemDataIndex, todoCompletedItemArray, completedTodoListEl);
         }
     }
 }
 
-function removeItem(id, array) {
+function removeItem(id, array, element) {
     array = array.filter(item => {
         return item.id !== id;
     });
-    removeFormDom(id);
+    console.log(element)
+    removeFormDom(id, element);
     updateTodoCounter();
 }
 
@@ -129,27 +153,27 @@ function setItemCompleted(element) {
 
     todoCompletedItemArray.push(item);
     renderCompletedItems(element);
-
 }
 
-
-function unsetItemCompleted(checkbox, id, array) {
+function unsetItemCompleted(checkbox, id, array, element) {
     checkbox.removeAttribute('checked');
-    removeItem(id, array);
+    removeItem(id, array, element);
 }
 
 function renderCompletedItems(element) {
     completedTodoListEl.insertAdjacentHTML('afterbegin', todoItemTemplate);
 
+    const todoItemEl = completedTodoListEl.querySelector('.todoItem');
     const todoItemTextEl = completedTodoListEl.querySelector('.todoItemText');
     const completeItemButtonEl = completedTodoListEl.querySelector('.completeItemButton');
+    todoItemEl.setAttribute('data-index', element.getAttribute('data-index'));
     todoItemTextEl.textContent = element.querySelector('p').textContent;
     completeItemButtonEl.setAttribute('checked', '');
 
     updateTodoCounter();
 }
 
-function removeFormDom(id) {
-    const element = document.querySelector(`[data-index="${id}"]`);
-    element.remove();
+function removeFormDom(id, element) {
+    const item = element.querySelector(`[data-index="${id}"]`);
+    item.remove();
 }
