@@ -17,10 +17,6 @@ h1 {
     margin-right: 30px;
 }
 
-.completedTodoList {
-    margin-left: 100px;
-}
-
 .incompletedTodoList {
-    margin-left: 300px;
+    margin-left: 100px;
 }

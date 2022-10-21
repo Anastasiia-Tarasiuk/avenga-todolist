@@ -23,8 +23,8 @@ incompletedTodosCounterEl.textContent = 0;
     
 function onButtonClick() {
     const dataIndex = Math.random().toString(36).slice(-6);
-    renderTodoItem(dataIndex, inputEl.value, incompletedTodoListEl)
-    setArrayItem(inputEl.value, dataIndex)
+    renderTodoItem(dataIndex, inputEl.value, incompletedTodoListEl);
+    setArrayItem(inputEl.value, dataIndex);
     inputEl.value = "";
 }
 
@@ -56,13 +56,13 @@ function onCheckBoxClick(e) {
     const itemDataIndex = e.parentElement.getAttribute('data-index');
     const todoTextContent = e.parentElement.querySelector('.todoItemText').textContent;
 
+    // if checkbox is checked, item sets to completedTodoList and removes from incompletedTodoList
     if (e.checked) {
         changeCheckboxValue(itemDataIndex, incompletedTodoListEl, 'true');
         renderTodoItem(itemDataIndex, todoTextContent, completedTodoListEl);
 
         const checkboxEl = completedTodoListEl.querySelector('.completeItemButton');
-        checkboxEl.setAttribute('checked', '');
-        
+        checkboxEl.setAttribute('checked', '');        
     } else {
         changeCheckboxValue(itemDataIndex, completedTodoListEl, 'false');
         renderTodoItem(itemDataIndex, todoTextContent, incompletedTodoListEl);
@@ -74,6 +74,7 @@ function onCheckBoxClick(e) {
 
 function changeCheckboxValue(index, element, dataDoneStatus) {
     [...element.querySelectorAll('.todoItem')].map(el => {
+        // remove item from list if dataIndex of item is the same as choosen item has
             if (el.getAttribute('data-index') === index) {
                 el.setAttribute('data-done-status', dataDoneStatus);
                 removeFormDom(index, element);
@@ -88,7 +89,9 @@ function onRemoveBtnClick(e) {
     removeItem(itemDataIndex);
     
     const allTodoItemEls = document.querySelectorAll('.todoItem');
+
     [...allTodoItemEls].map(el => {
+        // remove item from DOM if dataIndex of item is the same as choosen item has
         if (el.getAttribute('data-index') === itemDataIndex) {
             removeFormDom(itemDataIndex, document);
         }
