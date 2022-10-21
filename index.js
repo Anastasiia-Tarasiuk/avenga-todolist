@@ -19,6 +19,7 @@ const todoItemTemplate = `
 </li>`
 
 let todoItemArray = [];
+// зайві 2
 let todoCompletedItemArray = [];
 let todoIncompletedItemArray = [];
 
@@ -43,6 +44,32 @@ function onButtonClick() {
     inputEl.value = "";
 }
     
+function createTodoItem() {
+    todoListEl.insertAdjacentHTML('afterbegin', todoItemTemplate);
+    incompletedTodoListEl.insertAdjacentHTML('afterbegin', todoItemTemplate);
+    
+    let todoItemTextEl = todoListEl.querySelector('.todoItemText');
+    todoItemTextEl.textContent = inputEl.value;
+    todoItemTextEl = incompletedTodoListEl.querySelector('.todoItemText');
+    todoItemTextEl.textContent = inputEl.value;
+
+    const dataIndex = Math.random().toString(36).slice(-6);
+    let todoItemEl = todoListEl.querySelector('.todoItem');
+    todoItemEl.setAttribute('data-index', dataIndex);
+    todoItemEl = incompletedTodoListEl.querySelector('.todoItem');
+    todoItemEl.setAttribute('data-index', dataIndex);
+    
+    const item = {
+        "id": todoItemEl.getAttribute('data-index'),
+        "item": inputEl.value,
+        "isDone": false,
+    }
+    
+    todoItemArray.push(item);
+
+    todoIncompletedItemArray.push(item);
+}
+
 function updateTodoCounter() {
 
     allTodosCounterValue = todoItemArray.length;
@@ -54,50 +81,9 @@ function updateTodoCounter() {
     incompletedTodosCounterEl.textContent = incompletedTodosCounterValue;
 }
 
-function createTodoItem() {
-    todoListEl.insertAdjacentHTML('afterbegin', todoItemTemplate);
-    
-    const todoItemTextEl = document.querySelector('.todoItemText');
-    todoItemTextEl.textContent = inputEl.value;
-
-    const todoItemEl = document.querySelector('.todoItem');
-    todoItemEl.setAttribute('data-index', Math.random().toString(36).slice(-6));
-    
-    const item = {
-        "id": todoItemEl.getAttribute('data-index'),
-        "item": inputEl.value,
-        "isDone": false,
-    }
-    
-    todoItemArray.push(item);
-}
-
-// function renderTodoList() {
-//     try {
-//         // todoItemArray = JSON.parse(localStorage.getItem('todos'));
-//         // todoListEl.innerHTML = '';
-
-//         todoItemArray.map(item => {
-//             todoListEl.insertAdjacentHTML('afterbegin', todoItemTemplate);
-//             const todoItem = document.querySelector('.todoItem');
-//             todoItem.setAttribute('data-index', item.id);
-//             const todoItemTextEl = document.querySelector('.todoItemText');
-//             todoItemTextEl.textContent = item.item;
-//         })
-
-//     } catch (error) {
-//         console.log(error)
-//     }
-// }
-
-// function saveTodoList(item) {
-//     localStorage.setItem('todos', JSON.stringify(item));
-// }
-
 
 function itemActions(e) {
     const element = e.target;
-    console.log(element)
     const item = element.closest('li');
     const checkbox = element.closest('input');
     const itemDataIndex = item.getAttribute('data-index');
@@ -120,6 +106,8 @@ function itemActions(e) {
         currentArray = todoIncompletedItemArray;
         elementToDoAction = incompletedTodoListEl;
     }
+
+    // ------------
         
     if (element.className === "removeItemButton") {
         removeItem(itemDataIndex, currentArray, elementToDoAction);
@@ -127,9 +115,17 @@ function itemActions(e) {
     
     if (element.className === "completeItemButton") {
         if (checkbox.checked) {
+            todoItemArray.map(el => {
+
+                if (el.id === item.getAttribute('data-index')) {
+                    el.isDone = true;
+                }
+            })
             setItemCompleted(item);
+            removeItem(itemDataIndex, todoIncompletedItemArray, incompletedTodoListEl);
         } else {
-            unsetItemCompleted(checkbox, itemDataIndex, todoCompletedItemArray, completedTodoListEl);
+            unsetItemCompleted(checkbox);
+            removeItem(itemDataIndex, todoCompletedItemArray, completedTodoListEl);
         }
     }
 }
@@ -138,7 +134,6 @@ function removeItem(id, array, element) {
     array = array.filter(item => {
         return item.id !== id;
     });
-    console.log(element)
     removeFormDom(id, element);
     updateTodoCounter();
 }
@@ -155,9 +150,9 @@ function setItemCompleted(element) {
     renderCompletedItems(element);
 }
 
-function unsetItemCompleted(checkbox, id, array, element) {
+function unsetItemCompleted(checkbox) {
     checkbox.removeAttribute('checked');
-    removeItem(id, array, element);
+    
 }
 
 function renderCompletedItems(element) {

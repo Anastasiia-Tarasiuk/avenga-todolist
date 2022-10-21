@@ -20,3 +20,7 @@ h1 {
 .completedTodoList {
     margin-left: 100px;
 }
+
+.incompletedTodoList {
+    margin-left: 300px;
+}
