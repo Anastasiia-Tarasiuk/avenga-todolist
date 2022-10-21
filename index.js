@@ -88,15 +88,14 @@ function onRemoveBtnClick(e) {
     const itemDataIndex = e.parentElement.getAttribute('data-index');
 
     removeItem(itemDataIndex);
-    
-    const allTodoItemEls = document.querySelectorAll('.todoItem');
 
-    [...allTodoItemEls].map(el => {
+    [...document.querySelectorAll('.todoItem')].map(el => {
         // remove item from DOM if dataIndex of item is the same as choosen item has
         if (el.getAttribute('data-index') === itemDataIndex) {
             removeFormDom(itemDataIndex, document);
         }
     });
+    
     updateTodoCounter();
 }
 
