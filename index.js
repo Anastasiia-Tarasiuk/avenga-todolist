@@ -16,6 +16,9 @@ addTaskButtonEl.addEventListener('click', onButtonClick);
 
 document.addEventListener('keydown', onEnterKeyClick);
 
+completedTodosEl.addEventListener('click', onListClick);
+incompletedTodosEl.addEventListener('click', onListClick);
+
 const todoItemTemplate = `
 <li class="todoItem" data-done-status="false">
 <input class="completeItemButton" type="checkbox" onclick="onCheckBoxClick(this)">
@@ -23,29 +26,46 @@ const todoItemTemplate = `
 <button class="removeItemButton" type="button" onclick="onRemoveBtnClick(this)">Remove</button>
 </li>`
 
+// first render (getting values from local storage or empty value
+let todoItemArray = JSON.parse(localStorage.getItem('todos')) || [];
+
+if (todoItemArray.length > 0) {
+    
+    for (let i = 0; i < todoItemArray.length; i++) {
+        if (todoItemArray[i].isDone) {
+            
+            renderTodoItem(todoItemArray[i].id, todoItemArray[i].item, completedTodoListEl);
+            
+            const checkboxEl = completedTodoListEl.querySelector('.completeItemButton');
+            checkboxEl.setAttribute('checked', '');
+        } else {
+
+            renderTodoItem(todoItemArray[i].id, todoItemArray[i].item, incompletedTodoListEl);
+            
+            const checkboxEl = incompletedTodoListEl.querySelector('.completeItemButton');
+            checkboxEl.removeAttribute('checked');
+        }
+    }
+    updateTodoCounter();
+}
+
+if (todoItemArray.length === 0) {
+    completedTodosCounterEl.textContent = 0;
+    incompletedTodosCounterEl.textContent = 0;
+}
+
 completedTodoListEl.classList.add('isHidden');
 incompletedTodosCounterEl.parentElement.classList.add('isActive');
 
 renderEmptyTodoListContent(true); 
 
-function renderEmptyTodoListContent(value = false) {
-    if(value){
-        if (incompletedTodoListEl.children.length === 0) {
-            emptyTodoListEl.textContent = 'Here is no incompleted todos';
-        } else if (incompletedTodoListEl.children.length > 0) {
-            emptyTodoListEl.textContent = '';
-        }
-    } else {
-        if (completedTodoListEl.children.length === 0) {
-            emptyTodoListEl.textContent = 'Here is no completed todos';
-        } else if (completedTodoListEl.children.length > 0) {
-            emptyTodoListEl.textContent = '';
-        }
-    }
+// event functions
+function onButtonClick() {
+    const dataIndex = Math.random().toString(36).slice(-6);
+    renderTodoItem(dataIndex, inputEl.value, incompletedTodoListEl);
+    setArrayItem(inputEl.value, dataIndex);
+    inputEl.value = "";
 }
-
-completedTodosEl.addEventListener('click', onListClick);
-incompletedTodosEl.addEventListener('click', onListClick);
 
 function onEnterKeyClick(e) {
     if (e.code === "Enter") {
@@ -72,71 +92,6 @@ function onListClick(e) {
     }
 }
 
-let todoItemArray = JSON.parse(localStorage.getItem('todos')) || [];
-
-if (todoItemArray.length > 0) {
-
-    for (let i = 0; i < todoItemArray.length; i++) {
-        if (todoItemArray[i].isDone) {
-
-            renderTodoItem(todoItemArray[i].id, todoItemArray[i].item, completedTodoListEl);
-
-            const checkboxEl = completedTodoListEl.querySelector('.completeItemButton');
-            checkboxEl.setAttribute('checked', '');
-        } else {
-
-            renderTodoItem(todoItemArray[i].id, todoItemArray[i].item, incompletedTodoListEl);
-
-            const checkboxEl = incompletedTodoListEl.querySelector('.completeItemButton');
-            checkboxEl.removeAttribute('checked');
-        }
-    }
-    updateTodoCounter();
-}
-
-if (todoItemArray.length === 0) {
-    completedTodosCounterEl.textContent = 0;
-    incompletedTodosCounterEl.textContent = 0;
-}
-
-function onButtonClick() {
-    const dataIndex = Math.random().toString(36).slice(-6);
-    renderTodoItem(dataIndex, inputEl.value, incompletedTodoListEl);
-    setArrayItem(inputEl.value, dataIndex);
-    inputEl.value = "";
-}
-
-function renderTodoItem(dataIndex, text, list) {
-    list.insertAdjacentHTML('afterbegin', todoItemTemplate);
-    const todoItemTextEl = list.querySelector('.todoItemText');
-    todoItemTextEl.textContent = text;
-    const todoItemEl = list.querySelector('.todoItem');
-    todoItemEl.setAttribute('data-index', dataIndex);
-    updateTodoCounter();
-
-     if (completedTodoListEl.classList.contains('isHidden')) {
-        renderEmptyTodoListContent(true);
-    } else {
-        renderEmptyTodoListContent(false);
-    }
-
-}
-
-function setArrayItem(value, dataIndex) {
-    const item = {
-        "id": dataIndex,
-        "item": value,
-        "isDone": false,
-    }
-    todoItemArray.push(item);
-    localStorage.setItem('todos', JSON.stringify(todoItemArray));
-}
-
-function updateTodoCounter() {
-    completedTodosCounterEl.textContent = completedTodoListEl.children.length;
-    incompletedTodosCounterEl.textContent = incompletedTodoListEl.children.length;
-}
-
 function onCheckBoxClick(e) {
     const itemDataIndex = e.parentElement.getAttribute('data-index');
     const todoTextContent = e.parentElement.querySelector('.todoItemText').textContent;
@@ -159,21 +114,6 @@ function onCheckBoxClick(e) {
     }
 }
 
-function changeCheckboxValue(index, element, dataDoneStatus) {
-    [...element.querySelectorAll('.todoItem')].map(el => {
-        // remove item from list if dataIndex of item is the same as choosen item has
-        if (el.getAttribute('data-index') === index) {
-            el.setAttribute('data-done-status', dataDoneStatus);
-            removeFormDom(index, element);
-        }
-    })
-    
-    changeArrayItemStatus(index);
-    localStorage.clear();
-    localStorage.setItem('todos', JSON.stringify(todoItemArray));
-    updateTodoCounter();
-}
-
 function onRemoveBtnClick(e) {
     const itemDataIndex = e.parentElement.getAttribute('data-index');
 
@@ -193,6 +133,70 @@ function onRemoveBtnClick(e) {
     } else {
         renderEmptyTodoListContent(false);
     }
+}
+
+// render functions
+function renderEmptyTodoListContent(value = false) {
+    if(value){
+        if (incompletedTodoListEl.children.length === 0) {
+            emptyTodoListEl.textContent = 'Here is no incompleted todos';
+        } else if (incompletedTodoListEl.children.length > 0) {
+            emptyTodoListEl.textContent = '';
+        }
+    } else {
+        if (completedTodoListEl.children.length === 0) {
+            emptyTodoListEl.textContent = 'Here is no completed todos';
+        } else if (completedTodoListEl.children.length > 0) {
+            emptyTodoListEl.textContent = '';
+        }
+    }
+}
+
+function renderTodoItem(dataIndex, text, list) {
+    list.insertAdjacentHTML('afterbegin', todoItemTemplate);
+    const todoItemTextEl = list.querySelector('.todoItemText');
+    todoItemTextEl.textContent = text;
+    const todoItemEl = list.querySelector('.todoItem');
+    todoItemEl.setAttribute('data-index', dataIndex);
+    updateTodoCounter();
+
+     if (completedTodoListEl.classList.contains('isHidden')) {
+        renderEmptyTodoListContent(true);
+    } else {
+        renderEmptyTodoListContent(false);
+    }
+
+}
+
+// other functions
+function setArrayItem(value, dataIndex) {
+    const item = {
+        "id": dataIndex,
+        "item": value,
+        "isDone": false,
+    }
+    todoItemArray.push(item);
+    localStorage.setItem('todos', JSON.stringify(todoItemArray));
+}
+
+function updateTodoCounter() {
+    completedTodosCounterEl.textContent = completedTodoListEl.children.length;
+    incompletedTodosCounterEl.textContent = incompletedTodoListEl.children.length;
+}
+
+function changeCheckboxValue(index, element, dataDoneStatus) {
+    [...element.querySelectorAll('.todoItem')].map(el => {
+        // remove item from list if dataIndex of item is the same as choosen item has
+        if (el.getAttribute('data-index') === index) {
+            el.setAttribute('data-done-status', dataDoneStatus);
+            removeFormDom(index, element);
+        }
+    })
+    
+    changeArrayItemStatus(index);
+    localStorage.clear();
+    localStorage.setItem('todos', JSON.stringify(todoItemArray));
+    updateTodoCounter();
 }
 
 function removeItem(id) {
