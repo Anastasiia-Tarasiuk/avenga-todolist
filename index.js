@@ -14,6 +14,7 @@ const completedTodosEl = document.querySelector('.completedTodos');
 const allTodosEl = document.querySelector('.allTodos');
 
 const emptyTodoListEl = document.querySelector('.emptyTodoListContent');
+const emptyAllTodoEl = document.querySelector('.emptyAllTodosContent');
 
 addTaskButtonEl.addEventListener('click', onButtonClick);
 
@@ -92,30 +93,37 @@ function onListClick(e) {
             incompletedTodoListEl.classList.add('isHidden');
             completedTodosCounterEl.parentElement.classList.add('isActive');
             incompletedTodosCounterEl.parentElement.classList.remove('isActive');
-            renderEmptyTodoListContent(false);
-
             allTodoListEl.classList.add('isHidden');
             allTodosCounterEl.parentElement.classList.remove('isActive');
-            break;
+
+            renderEmptyTodoListContent(false);
+            emptyTodoListEl.classList.remove('isHidden');
+            emptyAllTodoEl.classList.add('isHidden');
+        break;
         case 'incompletedTodos':
             incompletedTodoListEl.classList.remove('isHidden');
             completedTodoListEl.classList.add('isHidden');
             incompletedTodosCounterEl.parentElement.classList.add('isActive');
             completedTodosCounterEl.parentElement.classList.remove('isActive');
-            renderEmptyTodoListContent(true);
-
             allTodoListEl.classList.add('isHidden');
             allTodosCounterEl.parentElement.classList.remove('isActive');
-            break;
+
+            renderEmptyTodoListContent(true);
+            emptyTodoListEl.classList.remove('isHidden');
+            emptyAllTodoEl.classList.add('isHidden');
+        break;
         case 'allTodos':
             allTodoListEl.classList.remove('isHidden');
             allTodosCounterEl.parentElement.classList.add('isActive');
-
             incompletedTodoListEl.classList.add('isHidden');
             completedTodoListEl.classList.add('isHidden');
             completedTodosCounterEl.parentElement.classList.remove('isActive');
             incompletedTodosCounterEl.parentElement.classList.remove('isActive');
-            break;
+
+            renderAllTodosContent();
+            emptyAllTodoEl.classList.remove('isHidden');
+            emptyTodoListEl.classList.add('isHidden');
+        break;
     }
 }
 
@@ -126,7 +134,6 @@ function onCheckBoxClick(e) {
     // if checkbox is checked, item sets to completedTodoList and removes from incompletedTodoList
     if (e.checked) {
         changeCheckboxValue(itemDataIndex, incompletedTodoListEl, 'true');
-        // changeCheckboxValue(itemDataIndex, allTodoListEl, 'true');
 
         [...allTodoListEl.children].map(item => {
             if (item.getAttribute('data-index') === itemDataIndex) {
@@ -143,7 +150,6 @@ function onCheckBoxClick(e) {
         
     } else {
         changeCheckboxValue(itemDataIndex, completedTodoListEl, 'false');
-        // changeCheckboxValue(itemDataIndex, allTodoListEl, 'false');
 
         [...allTodoListEl.children].map(item => {
             if (item.getAttribute('data-index') === itemDataIndex) {
@@ -195,6 +201,14 @@ function renderEmptyTodoListContent(value = false) {
         } else if (completedTodoListEl.children.length > 0) {
             emptyTodoListEl.textContent = '';
         }
+    } 
+}
+
+function renderAllTodosContent() {
+    if (todoItemArray.length === 0) {
+        emptyAllTodoEl.textContent = 'Todos list is empty';
+    } else {
+        emptyAllTodoEl.textContent = '';
     }
 }
 
@@ -206,7 +220,7 @@ function renderTodoItem(dataIndex, text, list) {
     todoItemEl.setAttribute('data-index', dataIndex);
     updateTodoCounter();
 
-     if (completedTodoListEl.classList.contains('isHidden')) {
+    if (completedTodoListEl.classList.contains('isHidden')) {
         renderEmptyTodoListContent(true);
     } else {
         renderEmptyTodoListContent(false);
@@ -249,6 +263,8 @@ function removeItem(id) {
     todoItemArray = todoItemArray.filter(item => {
         return item.id !== id;
     });
+
+    renderAllTodosContent();
 
     localStorage.clear();
     localStorage.setItem('todos', JSON.stringify(todoItemArray));
