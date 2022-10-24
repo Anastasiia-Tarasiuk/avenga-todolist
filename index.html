@@ -8,19 +8,23 @@
     <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
-    <h1>Todo list</h1>
-    <input class="input" type="text">
-    <button class="addTaskButton" type="submit">+</button>
+    <h1 class="title">Todo list</h1>
+    <div class="inputWrapper">
+        <input class="input" type="text">
+        <button class="addTaskButton" type="submit">+</button>
+    </div>
     <ul class="counterList">    
-        <li class="counterItem">
-            <p class="completedTodos">Completed: <span class="completedTodosCounter"><span></p>
-        </li>
         <li class="counterItem">
             <p class="incompletedTodos">Incompleted: <span class="incompletedTodosCounter"><span></p>
         </li>
+        <li class="counterItem">
+            <p class="completedTodos">Completed: <span class="completedTodosCounter"><span></p>
+        </li>
     </ul> 
-    <ul class="completedTodoList"></ul>
     <ul class="incompletedTodoList"></ul>
+    <ul class="completedTodoList"></ul>
+    <p class="emptyTodoList"></p>
+
     <script src="./index.js"></script>
 </body>
 </html>

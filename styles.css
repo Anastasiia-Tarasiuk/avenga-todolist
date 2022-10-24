@@ -1,10 +1,18 @@
+body {
+    background-color: grey;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 li {
     list-style-type: none;
 }
 
 ul, 
 p, 
-h1 {
+h1,
+input {
     margin: 0;
     padding: 0;
 }
@@ -17,6 +25,40 @@ h1 {
     margin-right: 30px;
 }
 
-.incompletedTodoList {
-    margin-left: 100px;
+.isHidden {
+    display: none;
 }
+
+.isActive {
+    color: white;
+}
+
+.title {
+    margin: 20px 0;
+}
+
+.input {
+    width: 400px;
+}
+
+.counterList {
+    margin: 20px 0;
+}
+
+.todoItem {
+    display: flex;
+}
+
+.todoItem:not(:last-child) {
+    margin-bottom: 20px;
+}
+
+.todoItemText {
+    width: 400px;
+    margin: 0 20px;
+}
+
+.counterList {
+    cursor: pointer;
+}
+
