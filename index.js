@@ -10,7 +10,7 @@ const incompletedTodosCounterEl = document.querySelector('.incompletedTodosCount
 const incompletedTodosEl = document.querySelector('.incompletedTodos');
 const completedTodosEl = document.querySelector('.completedTodos');
 
-const emptyTodoListEl = document.querySelector('.emptyTodoList');
+const emptyTodoListEl = document.querySelector('.emptyTodoListContent');
 
 addTaskButtonEl.addEventListener('click', onButtonClick);
 
@@ -25,20 +25,23 @@ const todoItemTemplate = `
 
 completedTodoListEl.classList.add('isHidden');
 incompletedTodosCounterEl.parentElement.classList.add('isActive');
-isEmptyTodoListShown(true);
 
-function isEmptyTodoListShown(value = false) {
-    if (value && incompletedTodoListEl.children.length === 0) { 
-        emptyTodoListEl.textContent = 'Here is no incompleted todos';
+renderEmptyTodoListContent(true); 
+
+function renderEmptyTodoListContent(value = false) {
+    if(value){
+        if (incompletedTodoListEl.children.length === 0) {
+            emptyTodoListEl.textContent = 'Here is no incompleted todos';
+        } else if (incompletedTodoListEl.children.length > 0) {
+            emptyTodoListEl.textContent = '';
+        }
+    } else {
+        if (completedTodoListEl.children.length === 0) {
+            emptyTodoListEl.textContent = 'Here is no completed todos';
+        } else if (completedTodoListEl.children.length > 0) {
+            emptyTodoListEl.textContent = '';
+        }
     }
-    if (!value && completedTodoListEl.children.length === 0) {
-        emptyTodoListEl.textContent = 'Here is no completed todos';
-    } 
-
-    if(completedTodoListEl.children.length !== 0  || incompletedTodoListEl.children.length !== 0) {
-        emptyTodoListEl.textContent = '';
-    }
-
 }
 
 completedTodosEl.addEventListener('click', onListClick);
@@ -57,18 +60,17 @@ function onListClick(e) {
             incompletedTodoListEl.classList.add('isHidden');
             completedTodosCounterEl.parentElement.classList.add('isActive');
             incompletedTodosCounterEl.parentElement.classList.remove('isActive');
-            isEmptyTodoListShown(false);
-        break;
+            renderEmptyTodoListContent(false);
+            break;
         case 'incompletedTodos':
             incompletedTodoListEl.classList.remove('isHidden');
             completedTodoListEl.classList.add('isHidden');
             incompletedTodosCounterEl.parentElement.classList.add('isActive');
             completedTodosCounterEl.parentElement.classList.remove('isActive');
-            isEmptyTodoListShown(true);
-        break;
+            renderEmptyTodoListContent(true);
+            break;
     }
 }
-
 
 let todoItemArray = JSON.parse(localStorage.getItem('todos')) || [];
 
@@ -80,24 +82,23 @@ if (todoItemArray.length > 0) {
             renderTodoItem(todoItemArray[i].id, todoItemArray[i].item, completedTodoListEl);
 
             const checkboxEl = completedTodoListEl.querySelector('.completeItemButton');
-            checkboxEl.setAttribute('checked', '');    
+            checkboxEl.setAttribute('checked', '');
         } else {
 
             renderTodoItem(todoItemArray[i].id, todoItemArray[i].item, incompletedTodoListEl);
-        
+
             const checkboxEl = incompletedTodoListEl.querySelector('.completeItemButton');
             checkboxEl.removeAttribute('checked');
         }
     }
     updateTodoCounter();
-    // isEmptyTodoListShown();
 }
 
 if (todoItemArray.length === 0) {
     completedTodosCounterEl.textContent = 0;
     incompletedTodosCounterEl.textContent = 0;
 }
-    
+
 function onButtonClick() {
     const dataIndex = Math.random().toString(36).slice(-6);
     renderTodoItem(dataIndex, inputEl.value, incompletedTodoListEl);
@@ -110,9 +111,15 @@ function renderTodoItem(dataIndex, text, list) {
     const todoItemTextEl = list.querySelector('.todoItemText');
     todoItemTextEl.textContent = text;
     const todoItemEl = list.querySelector('.todoItem');
-    todoItemEl.setAttribute('data-index', dataIndex);  
+    todoItemEl.setAttribute('data-index', dataIndex);
     updateTodoCounter();
-    isEmptyTodoListShown();
+
+     if (completedTodoListEl.classList.contains('isHidden')) {
+        renderEmptyTodoListContent(true);
+    } else {
+        renderEmptyTodoListContent(false);
+    }
+
 }
 
 function setArrayItem(value, dataIndex) {
@@ -140,13 +147,15 @@ function onCheckBoxClick(e) {
         renderTodoItem(itemDataIndex, todoTextContent, completedTodoListEl);
 
         const checkboxEl = completedTodoListEl.querySelector('.completeItemButton');
-        checkboxEl.setAttribute('checked', '');        
+        checkboxEl.setAttribute('checked', '');
+        renderEmptyTodoListContent(true);
     } else {
         changeCheckboxValue(itemDataIndex, completedTodoListEl, 'false');
         renderTodoItem(itemDataIndex, todoTextContent, incompletedTodoListEl);
-        
+
         const checkboxEl = incompletedTodoListEl.querySelector('.completeItemButton');
         checkboxEl.removeAttribute('checked');
+        renderEmptyTodoListContent(false);
     }
 }
 
@@ -158,12 +167,11 @@ function changeCheckboxValue(index, element, dataDoneStatus) {
             removeFormDom(index, element);
         }
     })
-
+    
     changeArrayItemStatus(index);
     localStorage.clear();
     localStorage.setItem('todos', JSON.stringify(todoItemArray));
     updateTodoCounter();
-    // isEmptyTodoListShown();
 }
 
 function onRemoveBtnClick(e) {
@@ -179,7 +187,12 @@ function onRemoveBtnClick(e) {
     });
 
     updateTodoCounter();
-    // isEmptyTodoListShown();
+
+    if (completedTodoListEl.classList.contains('isHidden')) {
+        renderEmptyTodoListContent(true);
+    } else {
+        renderEmptyTodoListContent(false);
+    }
 }
 
 function removeItem(id) {
@@ -203,4 +216,3 @@ function changeArrayItemStatus(index) {
         }
     })
 }
-
