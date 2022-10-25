@@ -21,16 +21,14 @@ input {
     display: flex;
 }
 
+.counterItem {
+    border-radius: 5%;
+    padding: 10px;
+    background-color: #efefef;
+}
+
 .counterItem:not(:last-child) {
     margin-right: 30px;
-}
-
-.isHidden {
-    display: none;
-}
-
-.isActive {
-    color: white;
 }
 
 .title {
@@ -62,3 +60,14 @@ input {
     cursor: pointer;
 }
 
+.isHidden {
+    display: none;
+}
+
+.isActive {
+    color: #0075ff;
+}
+
+.isEditable {
+    background-color: #efefef;
+}

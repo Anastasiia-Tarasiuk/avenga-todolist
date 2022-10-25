@@ -14,16 +14,19 @@
         <button class="addTaskButton" type="submit">+</button>
     </div>
     <ul class="counterList">  
-        <li class="counterItem">
-            <p class="allTodos">All: <span class="allTodosCounter"><span></p>
+        <li class="counterItem" data-type="all">
+            <p class="allTodos" data-type="all">All: <span class="allTodosCounter" data-type="all"><span></p>
         </li>
-        <li class="counterItem">
-            <p class="incompletedTodos">Incompleted: <span class="incompletedTodosCounter"><span></p>
+        <li class="counterItem" data-type="incompleted">
+            <p class="incompletedTodos" data-type="incompleted">Incompleted: <span class="incompletedTodosCounter" data-type="incompleted"><span></p>
         </li>
-        <li class="counterItem">
-            <p class="completedTodos">Completed: <span class="completedTodosCounter"><span></p>
+        <li class="counterItem" data-type="completed">
+            <p class="completedTodos" data-type="completed">Completed: <span class="completedTodosCounter" data-type="completed"><span></p>
         </li>
     </ul> 
+    <div>
+        
+    </div>
     <ul class="allTodoList"></ul>
     <ul class="incompletedTodoList"></ul>
     <ul class="completedTodoList"></ul>
