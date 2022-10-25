@@ -1,5 +1,8 @@
-const inputEl = document.querySelector('.input');
+const addTaskInputEl = document.querySelector('.addTaskInput');
 const addTaskButtonEl = document.querySelector('.addTaskButton');
+
+const filterInputEl = document.querySelector('.filterInput');
+const clearFilterInputValueButtonEl = document.querySelector('.clearFilterInputValueButton');
 
 const completedTodoListEl = document.querySelector('.completedTodoList');
 const incompletedTodoListEl = document.querySelector('.incompletedTodoList');
@@ -24,6 +27,9 @@ document.addEventListener('keydown', onEnterKeyClick);
 
 counterListEl.addEventListener('click', onListClick);
 
+filterInputEl.addEventListener('input', onFilterType);
+clearFilterInputValueButtonEl.addEventListener('click', onClearFilterInputValue);
+
 const todoItemTemplate = `
 <li class="todoItem" data-done-status="false">
 <input class="completeItemButton" type="checkbox" onclick="onCheckBoxClick(this)">
@@ -36,7 +42,6 @@ let editableTextContent = null;
 
 // first render (getting values from local storage or empty value
 let todoItemArray = JSON.parse(localStorage.getItem('todos')) || [];
-
 
 if (todoItemArray.length > 0) {
     
@@ -51,7 +56,6 @@ if (todoItemArray.length > 0) {
             allTodoListEl.querySelector('.completeItemButton').checked = true;
 
         } else {
-
             renderTodoItem(todoItemArray[i].id, todoItemArray[i].item, incompletedTodoListEl);
             
             const checkboxEl = incompletedTodoListEl.querySelector('.completeItemButton');
@@ -77,15 +81,47 @@ renderEmptyTodoListContent(true);
 
 // event functions
 function onButtonClick() {
-    if (inputEl.value.trim() !== "") {
+    if (addTaskInputEl.value.trim() !== "") {
         const dataIndex = Math.random().toString(36).slice(-6);
-        renderTodoItem(dataIndex, inputEl.value, incompletedTodoListEl);
-        renderTodoItem(dataIndex, inputEl.value, allTodoListEl);
-        setArrayItem(inputEl.value, dataIndex);
-        inputEl.value = "";        
+        renderTodoItem(dataIndex, addTaskInputEl.value, incompletedTodoListEl);
+        renderTodoItem(dataIndex, addTaskInputEl.value, allTodoListEl);
+        setArrayItem(addTaskInputEl.value, dataIndex);
+        addTaskInputEl.value = "";        
     }
 
     renderAllTodosContent()
+}
+
+function onFilterType(e) {
+    const value = e.currentTarget.value;
+
+    if (!allTodoListEl.classList.contains('isHidden')) {        
+        hideTodoListElements(allTodoListEl, value);        
+    }
+
+    if (!incompletedTodoListEl.classList.contains('isHidden')) {        
+        hideTodoListElements(incompletedTodoListEl, value);        
+    }
+
+    if (!completedTodoListEl.classList.contains('isHidden')) {        
+        hideTodoListElements(completedTodoListEl, value);        
+    }
+}
+
+function onClearFilterInputValue(e) {
+    e.target.previousElementSibling.value = "";
+
+    if (!allTodoListEl.classList.contains('isHidden')) {        
+        hideTodoListElements(allTodoListEl, '');        
+    }
+
+    if (!incompletedTodoListEl.classList.contains('isHidden')) {        
+        hideTodoListElements(incompletedTodoListEl, '');        
+    }
+
+    if (!completedTodoListEl.classList.contains('isHidden')) {        
+        hideTodoListElements(completedTodoListEl, '');        
+    }
 }
 
 function onEnterKeyClick(e) {
@@ -195,7 +231,7 @@ function onRemoveBtnClick(e) {
     }
     
     if (!allTodoListEl.classList.contains('isHidden')) {
-        renderAllTodosContent()
+        renderAllTodosContent();
     }
 }
 
@@ -205,10 +241,9 @@ function onEditBtnClick(e) {
             editableTextContent = item.textContent;
             item.contentEditable = true;
             item.classList.add('isEditable');
-            item.addEventListener('keydown', onTodoKeydown)
+            item.addEventListener('keydown', onTodoKeydown);
         }
     })
-
 }
 
 function onTodoKeydown(e) {
@@ -231,7 +266,6 @@ function onTodoKeydown(e) {
         e.currentTarget.classList.remove('isEditable');
     }
 }
-
 
 // render functions
 function renderEmptyTodoListContent(value = false) {
@@ -326,4 +360,19 @@ function changeArrayItemStatus(index) {
             el.isDone = !el.isDone;
         }
     })
+}
+
+function hideTodoListElements(array, value) {
+    const itemsArray = [...array.children];
+        itemsArray.map(item => {
+            [...item.children].map(el => {
+                if (el.className === "todoItemText") {
+                    if (!el.textContent.includes(value)) {
+                        el.parentElement.classList.add('isHidden');
+                    } else {
+                        el.parentElement.classList.remove('isHidden');
+                    }
+                }
+            })
+        })
 }

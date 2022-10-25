@@ -35,8 +35,13 @@ input {
     margin: 20px 0;
 }
 
-.input {
-    width: 400px;
+.addTaskInput {
+    width: 530px;
+    margin-bottom: 20px;
+}
+
+.filterInput {
+    width: 340px;
 }
 
 .counterList {

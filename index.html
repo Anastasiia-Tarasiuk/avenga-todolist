@@ -9,9 +9,13 @@
 </head>
 <body>
     <h1 class="title">Todo list</h1>
-    <div class="inputWrapper">
-        <input class="input" type="text">
+    <div class="addTaskWrapper">
+        <input class="addTaskInput" type="text" placeholder="Add todo">
         <button class="addTaskButton" type="submit">+</button>
+    </div>
+    <div class="filterWrapper">
+        <input class="filterInput" type="text" placeholder="Search">
+        <button class="clearFilterInputValueButton" type="button">Clear</button>
     </div>
     <ul class="counterList">  
         <li class="counterItem" data-type="all">
@@ -25,7 +29,7 @@
         </li>
     </ul> 
     <div>
-        
+
     </div>
     <ul class="allTodoList"></ul>
     <ul class="incompletedTodoList"></ul>
