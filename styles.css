@@ -65,7 +65,7 @@ input {
 .completeItemButton,
 button {
     cursor: pointer;
-    border-color: transparent;
+    border: none;
 }
 
 .removeItemButton {
@@ -88,6 +88,6 @@ button:hover,
 .counterItem:hover {
     background-color: black;
     color:#efefef;
-    border-color: transparent;
+    border: none;
     transition: 0.7s;
 }
