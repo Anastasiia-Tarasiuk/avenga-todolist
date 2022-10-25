@@ -22,11 +22,8 @@ const emptyAllTodoEl = document.querySelector('.emptyAllTodosContent');
 const counterListEl = document.querySelector('.counterList');
 
 addTaskButtonEl.addEventListener('click', onButtonClick);
-
 document.addEventListener('keydown', onEnterKeyClick);
-
 counterListEl.addEventListener('click', onListClick);
-
 filterInputEl.addEventListener('input', onFilterType);
 clearFilterInputValueButtonEl.addEventListener('click', onClearFilterInputValue);
 
@@ -40,21 +37,20 @@ const todoItemTemplate = `
 
 let editableTextContent = null;
 
-// first render (getting values from local storage or empty value
+// first render (gets values from local storage or sets empty value)
 let todoItemArray = JSON.parse(localStorage.getItem('todos')) || [];
 
-if (todoItemArray.length > 0) {
-    
+if (todoItemArray.length > 0) {    
     for (let i = 0; i < todoItemArray.length; i++) {
+        // array items renders to allTodoList
         renderTodoItem(todoItemArray[i].id, todoItemArray[i].item, allTodoListEl);
+        // according to isDone status renders to completedTodoList or incompletedTodoList
         if (todoItemArray[i].isDone) {
-            
             renderTodoItem(todoItemArray[i].id, todoItemArray[i].item, completedTodoListEl);
             
             const checkboxEl = completedTodoListEl.querySelector('.completeItemButton');
             checkboxEl.checked = true;
             allTodoListEl.querySelector('.completeItemButton').checked = true;
-
         } else {
             renderTodoItem(todoItemArray[i].id, todoItemArray[i].item, incompletedTodoListEl);
             
@@ -66,6 +62,7 @@ if (todoItemArray.length > 0) {
     updateTodoCounter();
 }
 
+// if array is empty sets default counter values
 if (todoItemArray.length === 0) {
     completedTodosCounterEl.textContent = 0;
     incompletedTodosCounterEl.textContent = 0;
@@ -81,6 +78,7 @@ renderEmptyTodoListContent(true);
 
 // event functions
 function onButtonClick() {
+    // doesn't let add tasks with no text
     if (addTaskInputEl.value.trim() !== "") {
         const dataIndex = Math.random().toString(36).slice(-6);
         renderTodoItem(dataIndex, addTaskInputEl.value, incompletedTodoListEl);
@@ -93,8 +91,17 @@ function onButtonClick() {
 }
 
 function onFilterType(e) {
-    const value = e.currentTarget.value;
+    getActiveListForFolterUsage(e.currentTarget.value);
+}
 
+function onClearFilterInputValue(e) {
+    e.target.previousElementSibling.value = "";
+
+    getActiveListForFolterUsage(e.target.previousElementSibling.value);
+}
+
+
+function getActiveListForFolterUsage(value) {
     if (!allTodoListEl.classList.contains('isHidden')) {        
         hideTodoListElements(allTodoListEl, value);        
     }
@@ -108,22 +115,6 @@ function onFilterType(e) {
     }
 }
 
-function onClearFilterInputValue(e) {
-    e.target.previousElementSibling.value = "";
-
-    if (!allTodoListEl.classList.contains('isHidden')) {        
-        hideTodoListElements(allTodoListEl, '');        
-    }
-
-    if (!incompletedTodoListEl.classList.contains('isHidden')) {        
-        hideTodoListElements(incompletedTodoListEl, '');        
-    }
-
-    if (!completedTodoListEl.classList.contains('isHidden')) {        
-        hideTodoListElements(completedTodoListEl, '');        
-    }
-}
-
 function onEnterKeyClick(e) {
     if (e.code === "Enter") {
         onButtonClick();
@@ -131,6 +122,7 @@ function onEnterKeyClick(e) {
 }
 
 function onListClick(e) {
+    // makes one todos list active
     switch (e.target.getAttribute('data-type')) {
         case 'completed':
             completedTodoListEl.classList.remove('isHidden');
@@ -216,7 +208,7 @@ function onRemoveBtnClick(e) {
     removeItem(itemDataIndex);
 
     [...document.querySelectorAll('.todoItem')].map(el => {
-        // remove item from DOM if dataIndex of item is the same as choosen item has
+        // removes item from DOM if dataIndex of item is the same as choosen item has
         if (el.getAttribute('data-index') === itemDataIndex) {
             removeFormDom(itemDataIndex, document);
         }
@@ -224,6 +216,7 @@ function onRemoveBtnClick(e) {
 
     updateTodoCounter();
 
+    // checks which todos list is active
     if (completedTodoListEl.classList.contains('isHidden')) {
         renderEmptyTodoListContent(true);
     } else if (incompletedTodoListEl.classList.contains('isHidden')) {
@@ -254,6 +247,7 @@ function onTodoKeydown(e) {
         const arrayFromLocalStorage = JSON.parse(localStorage.getItem('todos'));
         localStorage.clear();
         
+        // looks for item with edited value and sets new value
         arrayFromLocalStorage.map(el => {
             if (el.item === editableTextContent) {
                 el.item = e.currentTarget.textContent;
@@ -269,6 +263,7 @@ function onTodoKeydown(e) {
 
 // render functions
 function renderEmptyTodoListContent(value = false) {
+    // renders message according to active list
     if (value){
         if (incompletedTodoListEl.children.length === 0) {
             emptyTodoListEl.textContent = 'Here is no incompleted todos';
@@ -285,6 +280,7 @@ function renderEmptyTodoListContent(value = false) {
 }
 
 function renderAllTodosContent() {
+    // renders message for all todos list if it is active
     if (todoItemArray.length === 0) {
         emptyAllTodoEl.textContent = 'Todos list is empty';
     }
@@ -301,6 +297,7 @@ function renderTodoItem(dataIndex, text, list) {
     todoItemEl.setAttribute('data-index', dataIndex);
     updateTodoCounter();
 
+    // renders message according to active list
     if (completedTodoListEl.classList.contains('isHidden')) {
         renderEmptyTodoListContent(true);
     } else {
@@ -329,6 +326,7 @@ function updateTodoCounter() {
 function changeCheckboxValue(index, element, dataDoneStatus) {
     [...element.querySelectorAll('.todoItem')].map(el => {
 
+        // sets done stutus to items in array
         if (el.getAttribute('data-index') === index) {
             el.setAttribute('data-done-status', dataDoneStatus);
         }
@@ -366,7 +364,9 @@ function hideTodoListElements(array, value) {
     const itemsArray = [...array.children];
         itemsArray.map(item => {
             [...item.children].map(el => {
+                // looks for text element in DOM item
                 if (el.className === "todoItemText") {
+                    // hides items if text element value doesn't containe filter value
                     if (!el.textContent.includes(value)) {
                         el.parentElement.classList.add('isHidden');
                     } else {
