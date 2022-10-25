@@ -61,8 +61,15 @@ input {
     margin: 0 20px;
 }
 
-.counterList {
+.counterList,
+.completeItemButton,
+button {
     cursor: pointer;
+    border-color: transparent;
+}
+
+.removeItemButton {
+    margin-right: 5px;
 }
 
 .isHidden {
@@ -75,4 +82,12 @@ input {
 
 .isEditable {
     background-color: #efefef;
+}
+
+button:hover,
+.counterItem:hover {
+    background-color: black;
+    color:#efefef;
+    border-color: transparent;
+    transition: 0.7s;
 }

@@ -1,25 +1,32 @@
+// addTask elements
 const addTaskInputEl = document.querySelector('.addTaskInput');
 const addTaskButtonEl = document.querySelector('.addTaskButton');
 
+// filter elements
 const filterInputEl = document.querySelector('.filterInput');
 const clearFilterInputValueButtonEl = document.querySelector('.clearFilterInputValueButton');
 
+// todos lists
 const completedTodoListEl = document.querySelector('.completedTodoList');
 const incompletedTodoListEl = document.querySelector('.incompletedTodoList');
 const allTodoListEl = document.querySelector('.allTodoList');
 
+// counter values elements
 const completedTodosCounterEl = document.querySelector('.completedTodosCounter');
 const incompletedTodosCounterEl = document.querySelector('.incompletedTodosCounter');
 const allTodosCounterEl = document.querySelector('.allTodosCounter');
 
+// counter text elements
 const incompletedTodosEl = document.querySelector('.incompletedTodos');
 const completedTodosEl = document.querySelector('.completedTodos');
 const allTodosEl = document.querySelector('.allTodos');
 
+// counter list
+const counterListEl = document.querySelector('.counterList');
+
+// list message elements
 const emptyTodoListEl = document.querySelector('.emptyTodoListContent');
 const emptyAllTodoEl = document.querySelector('.emptyAllTodosContent');
-
-const counterListEl = document.querySelector('.counterList');
 
 addTaskButtonEl.addEventListener('click', onButtonClick);
 document.addEventListener('keydown', onEnterKeyClick);
