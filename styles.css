@@ -66,6 +66,7 @@ input {
 button {
     cursor: pointer;
     border: none;
+    border-radius: 5%;
 }
 
 .removeItemButton {

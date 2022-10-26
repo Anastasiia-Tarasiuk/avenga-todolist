@@ -33,6 +33,7 @@ document.addEventListener('keydown', onEnterKeyClick);
 counterListEl.addEventListener('click', onListClick);
 filterInputEl.addEventListener('input', onFilterType);
 clearFilterInputValueButtonEl.addEventListener('click', onClearFilterInputValue);
+document.addEventListener('DOMContentLoaded', onPageReload);
 
 const todoItemTemplate = `
 <li class="todoItem" data-done-status="false">
@@ -75,11 +76,6 @@ if (todoItemArray.length === 0) {
     incompletedTodosCounterEl.textContent = 0;
     allTodosCounterEl.textContent = 0;
 }
-
-completedTodoListEl.classList.add('isHidden');
-allTodoListEl.classList.add('isHidden');
-
-incompletedTodosCounterEl.parentElement.classList.add('isActive');
 
 renderEmptyTodoListContent(true); 
 
@@ -128,45 +124,40 @@ function onEnterKeyClick(e) {
     }
 }
 
+function onPageReload() {
+    const activePage = sessionStorage.getItem("isActive");
+    switch (activePage) {
+        case 'completed':
+            makeCompletedTodoListActive();
+            break;
+        case 'incompleted':
+            makeIncompletedTodoListActive();
+            break;
+        case 'all':
+            makeAllTodoListActive();
+            break;
+        default:
+            completedTodoListEl.classList.add('isHidden');
+            allTodoListEl.classList.add('isHidden');
+            incompletedTodosCounterEl.parentElement.classList.add('isActive');
+    }
+}
+
 function onListClick(e) {
     // makes one todos list active
     switch (e.target.getAttribute('data-type')) {
         case 'completed':
-            completedTodoListEl.classList.remove('isHidden');
-            incompletedTodoListEl.classList.add('isHidden');
-            completedTodosCounterEl.parentElement.classList.add('isActive');
-            incompletedTodosCounterEl.parentElement.classList.remove('isActive');
-            allTodoListEl.classList.add('isHidden');
-            allTodosCounterEl.parentElement.classList.remove('isActive');
-
-            renderEmptyTodoListContent(false);
-            emptyTodoListEl.classList.remove('isHidden');
-            emptyAllTodoEl.classList.add('isHidden');
-        break;
+            makeCompletedTodoListActive();
+            sessionStorage.setItem("isActive", 'completed');
+            break;
         case 'incompleted':
-            incompletedTodoListEl.classList.remove('isHidden');
-            completedTodoListEl.classList.add('isHidden');
-            incompletedTodosCounterEl.parentElement.classList.add('isActive');
-            completedTodosCounterEl.parentElement.classList.remove('isActive');
-            allTodoListEl.classList.add('isHidden');
-            allTodosCounterEl.parentElement.classList.remove('isActive');
-
-            renderEmptyTodoListContent(true);
-            emptyTodoListEl.classList.remove('isHidden');
-            emptyAllTodoEl.classList.add('isHidden');
-        break;
-        case 'all':
-            allTodoListEl.classList.remove('isHidden');
-            allTodosCounterEl.parentElement.classList.add('isActive');
-            incompletedTodoListEl.classList.add('isHidden');
-            completedTodoListEl.classList.add('isHidden');
-            completedTodosCounterEl.parentElement.classList.remove('isActive');
-            incompletedTodosCounterEl.parentElement.classList.remove('isActive');
-
-            renderAllTodosContent();
-            emptyAllTodoEl.classList.remove('isHidden');
-            emptyTodoListEl.classList.add('isHidden');
-        break;
+            makeIncompletedTodoListActive();
+            sessionStorage.setItem("isActive", 'incompleted');
+            break;
+        case 'all':            
+            makeAllTodoListActive()
+            sessionStorage.setItem("isActive", 'all');
+            break;
     }
 }
 
@@ -382,4 +373,43 @@ function hideTodoListElements(array, value) {
                 }
             })
         })
+}
+
+function makeIncompletedTodoListActive() {
+    incompletedTodoListEl.classList.remove('isHidden');
+    completedTodoListEl.classList.add('isHidden');
+    incompletedTodosCounterEl.parentElement.classList.add('isActive');
+    completedTodosCounterEl.parentElement.classList.remove('isActive');
+    allTodoListEl.classList.add('isHidden');
+    allTodosCounterEl.parentElement.classList.remove('isActive');
+    emptyTodoListEl.classList.remove('isHidden');
+    emptyAllTodoEl.classList.add('isHidden');
+
+    renderEmptyTodoListContent(true);
+}
+
+function makeAllTodoListActive() {
+    allTodoListEl.classList.remove('isHidden');
+    allTodosCounterEl.parentElement.classList.add('isActive');
+    incompletedTodoListEl.classList.add('isHidden');
+    completedTodoListEl.classList.add('isHidden');
+    completedTodosCounterEl.parentElement.classList.remove('isActive');
+    incompletedTodosCounterEl.parentElement.classList.remove('isActive');
+    emptyAllTodoEl.classList.remove('isHidden');
+    emptyTodoListEl.classList.add('isHidden');
+
+    renderAllTodosContent();
+}
+
+function makeCompletedTodoListActive() {
+    completedTodoListEl.classList.remove('isHidden');
+    incompletedTodoListEl.classList.add('isHidden');
+    completedTodosCounterEl.parentElement.classList.add('isActive');
+    incompletedTodosCounterEl.parentElement.classList.remove('isActive');
+    allTodoListEl.classList.add('isHidden');
+    allTodosCounterEl.parentElement.classList.remove('isActive');
+    emptyTodoListEl.classList.remove('isHidden');
+    emptyAllTodoEl.classList.add('isHidden');
+
+    renderEmptyTodoListContent(false);    
 }
